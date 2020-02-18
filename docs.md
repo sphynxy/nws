@@ -1,13 +1,11 @@
 National Weather Service (weather.gov) API
 =========
 
-Currently there is no easy way to change the location in this API (but that will be fixed soon)
-
 ### Getting Info example
 ```python
 import nws
 
-n = nws.NWS()
+n = nws.NWS(coordinates=(32.83, -97.36))
 
 # Getting the temperature 1 segment in the future
 print(n.get("temperature"), 1)
