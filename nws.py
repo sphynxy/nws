@@ -106,7 +106,7 @@ class NWS:
 
     @staticmethod
     def convert_time(iso_time, simple=True):
-        # example time 2020-02-10T03:00:00+00:00/PT3H
+        # Converts UTC-0 time to local time, in ISO-8601 format.
         year = iso_time.split("-")[0]
         mm = iso_time.split("-")[1]
         dd = iso_time.split("-")[2].split("T")[0]
