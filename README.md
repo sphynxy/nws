@@ -1,27 +1,10 @@
 # nws
-wip nws api for getting weather data for an automated garden
+Python 3 weather.gov library
+nws.py has no requirements
 
-example: this gets the hourly temperature for the next 12 hours (right now it is just "sections" because api.weather.gov doesnt always have the data for the exact hour, so it will approximate to the nearest hour)
-
+### example
 ```python
 import nws
 
-weather = nws.NWS()
-
-def hourly_temperature(hours):
-
-    period = []
-    temperature = []
-
-    for hour in range(hours):
-
-        period.append(hour)
-        try:
-            temperature.append(weather.get("temperature", future=hour, include_future=True))
-        except TypeError:
-            print('uh')
-
-    return [period, temperature]
-
-h = hourly_temperature(12)
-```
+n = nws.NWS(coordinates=(32.83, -97.36))
+print(n.get("temperature", include_local_time=True))
