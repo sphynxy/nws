@@ -5,7 +5,17 @@ from dateutil.tz import tzutc, tzlocal
 
 
 class NWS:
-    __doc__ = '''National Weather Service (weather.gov) API'''
+    __doc__ = '''National Weather Service (weather.gov) API
+    
+            DO NOT access these servers with programs/scripts that are:
+
+                too repetitive a login over time ( know frequency data changes ), 
+                opening up multiple sessions to access the same data products  
+                using the FTP "ls" (list command) during each returning session  
+                as they will significantly reduce server response for everyone and severely impact 
+                the access by all users. DO NOT DO THIS!
+                
+    '''
 
     def __init__(self, coordinates, _v=False):
 
@@ -47,13 +57,12 @@ class NWS:
     def update(self):
         self.__init__(self.coordinates)
 
-    def get(self, uri, future=0, include_segment=False, _v=False):
+    def get(self, uri, future=0, include_local_time=False, convert=True, _v=False):
         # Gets data from the grid points JSON file
 
         time = self.__round_time()
 
-        loop = 0
-        index = 0
+        loop, index = 0, 0
 
         valid_times = []
 
@@ -63,7 +72,24 @@ class NWS:
                     print("Exact time found for:", uri)
 
                 if future == 0:
-                    return value["value"]
+                    values = list(value.values())
+                    if include_local_time:
+
+                        values[0] = self.convert_time(values[0])
+
+                        if convert:
+                            values[1] = self.m_to_im(values[1], uom="c")
+                            return values
+
+                        else:
+                            return values
+
+                    else:
+                        if convert:
+                            return self.m_to_im(values[1], uom="c")
+                        
+                        else:
+                            return values[1]
 
             loop += 1
 
@@ -78,10 +104,10 @@ class NWS:
                 hour = int(time.split("T")[1].split(":")[0])
 
                 try:
-                    if include_segment:
-                        return self.__data["properties"][uri]["values"][min(valid_times,
-                                                                            key=lambda x: abs(int(x[0]) - hour))[2]
-                                                                        + future]
+                    if include_local_time:
+                        return (self.__data["properties"][uri]["values"][min(valid_times,
+                                key=lambda x: abs(int(x[0]) - hour))[2] + future]
+                                )
 
                     else:
                         return self.__data["properties"][uri]["values"][min(valid_times,
@@ -115,7 +141,7 @@ class NWS:
 
         if simple:
             return str(datetime(int(year), int(mm), int(dd),
-                                int(h), int(m), 0, 0, tzinfo=tzutc()).astimezone(tzlocal())).split('-')[1:-1][1][:-3]
+                                int(h), int(m), 0, 0, tzinfo=tzutc()).astimezone(tzlocal()))
         else:
             return datetime(int(year), int(mm), int(dd), int(h), int(m), 0, 0, tzinfo=tzutc()).astimezone(tzlocal())
 
