@@ -1,5 +1,5 @@
 # nws
-Python 3 weather.gov library
+Python 3 weather.gov library.  
 nws.py has no requirements
 
 ### example
