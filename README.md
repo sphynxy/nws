@@ -2,6 +2,8 @@
 Python 3 weather.gov library.  
 nws.py has no requirements
 
+Check: https://www.weather.gov/disclaimer
+
 ### example
 ```python
 import nws
